@@ -3,51 +3,39 @@
 // 算法的时间复杂度应该为 O(log (m+n)) 。
 
 #include <stdio.h>
-double findMedianSortedArrays(int *nums1, int nums1Size, int *nums2, int nums2Size)
-{
-    int sum = nums1Size + nums2Size;
-    double ans = 0;
-    int i = 0, j = 0;
-    if(sum%2==1)
-    {
-    int moves = sum / 2;
-    for (moves; moves > 0; moves--)
-    {
-        if (i < nums1Size && j < nums2Size)
-            if (nums1[i] <= nums2[j])
-                i++;
-            else
-                j++;
-        else if (i == nums1Size)
-            j++;
-        else
-            i++;
+#include <limits.h>
+
+double findMedianSortedArrays(int* nums1, int nums1Size, int* nums2, int nums2Size) {
+    if (nums1Size > nums2Size) {
+        return findMedianSortedArrays(nums2, nums2Size, nums1, nums1Size);
     }
-    if (i<nums1Size&&j<nums2Size)  
-        ans = nums1[i] < nums2[j] ? nums1[i] : nums2[j];
-    if (i==nums1Size&&j<nums2Size)  
-        ans = nums2[j];
-    if (i<nums1Size&&j==nums2Size)  
-        ans = nums1[i];
+    
+    int x = nums1Size;
+    int y = nums2Size;
+    int low = 0, high = x;
+    
+    while (low <= high) {
+        int partitionX = (low + high) / 2;
+        int partitionY = (x + y + 1) / 2 - partitionX;
+        
+        int maxX = (partitionX == 0) ? INT_MIN : nums1[partitionX - 1];
+        int maxY = (partitionY == 0) ? INT_MIN : nums2[partitionY - 1];
+        
+        int minX = (partitionX == x) ? INT_MAX : nums1[partitionX];
+        int minY = (partitionY == y) ? INT_MAX : nums2[partitionY];
+        
+        if (maxX <= minY && maxY <= minX) {
+            if ((x + y) % 2 == 0) {
+                return ((double)fmax(maxX, maxY) + fmin(minX, minY)) / 2;
+            } else {
+                return (double)fmax(maxX, maxY);
+            }
+        } else if (maxX > minY) {
+            high = partitionX - 1;
+        } else {
+            low = partitionX + 1;
+        }
     }
-    if (sum % 2 == 0)
-    {
-    int moves = (sum/2)-1;
-    for (moves; moves > 0; moves--)
-    {
-        if (i < nums1Size && j < nums2Size)
-            if (nums1[i] <= nums2[j])
-                i++;
-            else
-                j++;
-        else if (i == nums1Size)
-            j++;
-        else
-            i++;
-    }
-    if (i<nums1Size&&j<nums2Size)  ans=((double)nums1[i]+(double)nums2[j])/2;
-    if (i==nums1Size&&j<nums2Size)  ans=((double)nums2[j+1]+(double)nums2[j])/2;
-    if (i<nums1Size&&j==nums2Size)  ans=((double)nums1[i+1]+(double)nums1[i])/2;
-    }
-    return ans;
+    
+    return -1; // Should never reach here
 }
