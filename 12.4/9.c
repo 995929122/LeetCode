@@ -16,8 +16,8 @@ bool isPalindrome(int x) {
         return true;
     if (x < 10)
         return true;
-    if(x%10==0)
-        return false;
+    if(x%10==0)              //这个if没啥用 不影响结果 但是可以减少一些不必要的运算()
+        return false;          //加上这个if后 从 7ms 减少到 0ms     (在力扣平台上)
     int copy;
     int length = 0;
     for (copy = x; copy > 0; copy /= 10) {
@@ -52,3 +52,6 @@ bool isPalindrome(int x) {
         return true;
     }
 }
+
+
+//多位回文数一定是11的倍数
